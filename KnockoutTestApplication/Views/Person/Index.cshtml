@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+@model KnockoutTestApplication.ViewModel.PersonViewModel
+@using KnockoutTestApplication.Helper
+@using System.Web.Helpers;
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+    <link href="~/Content/Person.css" rel="stylesheet" />
+}
+
+@section scripts 
+{
+    @Scripts.Render("~/bundles/jqueryui")
+    <script src="~/Scripts/knockout-2.1.0.js"></script>
+    <script src="~/Scripts/knockout-mapping-latest.js"></script>
+    <script src="~/Scripts/Application/Person.js"></script>
+    <script type="text/javascript">
+        Person.SaveUrl = '@Url.Action("SavePersonDetails", "Person")';
+        Person.ViewModel = ko.mapping.fromJS(@Html.Raw(Json.Encode(Model)));
+        Person.Countries = @Html.Raw(Json.Encode(ViewBag.Countries));  
+
+    </script>
+}
+
+<form>
+    <div class="mainWrapper">
+        <table>
+            <tr>
+                <td>Id:</td>
+                <td>@Html.ObservableControlFor(m => m.Id, ControlTypeConstants.Html5NumberInput)</td>
+            </tr>
+            <tr>
+                <td>Name:</td>
+                <td>@Html.ObservableControlFor(m => m.Name)</td>
+            </tr>
+            <tr>
+                <td>Date of Birth:</td>
+                <td>@Html.ObservableControlFor(m => m.DateOfBirth, ControlTypeConstants.JqueryUIDateInput)</td>
+            </tr>
+            <tr>
+                <td>Country (id will be assigned)</td>
+                <td>@Html.ObservableControlFor(
+                        expression: model => model.CountryId,
+                        controlType: ControlTypeConstants.DropDownList,
+                        htmlAttributes: new
+                        {
+                            data_bind = "options: Person.Countries, optionsCaption: 'Please Choose', optionsText: 'Name', value: Person.ViewModel.Country"
+                        })
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input id="Save" type="submit" value="Save" />
+</form>
